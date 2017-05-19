@@ -1,7 +1,4 @@
-package it.polito.tdp.porto.model;
-
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
+ package it.polito.tdp.porto.model;
 
 import it.polito.tdp.porto.db.PortoDAO;
 
@@ -29,6 +26,17 @@ public class TestModel {
 		for(Author aa : model.getCoautori(a)){
 			System.out.println(aa.toString());
 		}
+		
+		System.out.println();
+		Author a2=pdao.getAutore(20500);
+		System.out.println("Cammino minimo tra autore "+a+" e autore "+a2);
+		for(Paper aa : model.getElencoArticoli(a, a2)){
+			System.out.println(aa.toString());
+		}
+		
+		System.out.println();
+		
+	
 	}
 
 }

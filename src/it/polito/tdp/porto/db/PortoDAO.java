@@ -138,4 +138,38 @@ public class PortoDAO {
 			throw new RuntimeException("Errore Db");
 		}
 	}
+	
+	/*
+	 * Dati due autori ottengo un articolo comune ad entrambi.
+	 */
+	public Paper getArticoloComune(Author a1, Author a2) {
+
+		final String sql = "SELECT paper.eprintid, paper.title, paper.issn, paper.publication, paper.`type`, paper.types "+
+							"FROM paper, creator AS c1, creator AS c2 "+
+							"WHERE paper.eprintid=c1.eprintid AND c1.eprintid=c2.eprintid AND c1.authorid=? AND c2.authorid=? ";
+
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, a1.getId());
+			st.setInt(2, a2.getId());
+
+			ResultSet rs = st.executeQuery();
+
+			//ottengo un solo articolo tra quelli in comune
+			if (rs.next()) {
+				Paper paper = new Paper(rs.getInt("eprintid"), rs.getString("title"), rs.getString("issn"),
+						rs.getString("publication"), rs.getString("type"), rs.getString("types"));
+				return paper;
+			}
+			st.close();
+			conn.close();
+
+			return null;
+
+		} catch (SQLException e) {
+			 e.printStackTrace();
+			throw new RuntimeException("Errore Db");
+		}
+	}
 }

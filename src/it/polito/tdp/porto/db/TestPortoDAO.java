@@ -25,7 +25,12 @@ public class TestPortoDAO {
 		for(Author aa : pd.getCoautori(a, p)){
 			System.out.println(aa.toString());
 		}
-
+		
+		System.out.println();
+		Author p1=pd.getAutore(719);
+		Author p2=pd.getAutore(2185);
+		System.out.println("Articoli comuni agli autori "+p1+" e "+p2);
+		System.out.println(pd.getArticoloComune(p1, p2));
 	}
 
 }

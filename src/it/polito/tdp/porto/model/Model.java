@@ -1,8 +1,12 @@
 package it.polito.tdp.porto.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -13,8 +17,7 @@ public class Model {
 	//Grafo semplice, non orientato e non pesato
 	private SimpleGraph<Author,DefaultEdge> grafo;
 	private AuthorIdMap authorIdMap;
-	private List<Author> autori;
-	
+	private List<Author> autori;	
 	public Model(){
 		authorIdMap=new AuthorIdMap();
 	}
@@ -54,5 +57,27 @@ public class Model {
 			creaGrafo();
 		return grafo;
 	}
-
+	
+	public List<Paper> getElencoArticoli(Author partenza, Author destinazione){
+		UndirectedGraph<Author,DefaultEdge> g=this.getGrafo();
+		DijkstraShortestPath<Author, DefaultEdge> dsp=new DijkstraShortestPath<Author, DefaultEdge>(g, partenza, destinazione);
+		GraphPath<Author,DefaultEdge> percorso=dsp.getPath();
+		List<Author> listVertex=new ArrayList<Author>();
+		if(percorso==null)
+			return null;
+		for(DefaultEdge dwe : percorso.getEdgeList()){
+			if(!listVertex.contains(g.getEdgeSource(dwe)))
+				listVertex.add(g.getEdgeSource(dwe));
+			if(!listVertex.contains(g.getEdgeTarget(dwe)))
+				listVertex.add(g.getEdgeTarget(dwe));
+		}
+		List<Paper> elencoArticoli=new ArrayList<Paper>();
+		for(int i=0; i<listVertex.size()-1; i++){
+			PortoDAO pdao=new PortoDAO();
+			Paper p=pdao.getArticoloComune(listVertex.get(i), listVertex.get(i+1));
+			elencoArticoli.add(p);
+		}
+		return elencoArticoli;
+	}
+			
 }
